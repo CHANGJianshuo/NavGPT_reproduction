@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  navgpt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: navgpt_reproduction
+    runtime: nvidia
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_BASE=${OPENAI_API_BASE}
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - ./datasets:/workspace/datasets
+      - ./outputs:/workspace/outputs
+    stdin_open: true
+    tty: true
+    # X11 visualization (uncomment to enable)
+    # environment:
+    #   - DISPLAY=${DISPLAY}
+    # volumes:
+    #   - /tmp/.X11-unix:/tmp/.X11-unix:ro

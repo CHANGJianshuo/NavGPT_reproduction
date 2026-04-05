@@ -1,0 +1,7 @@
+datasets/
+outputs/
+.git/
+.env
+*.pyc
+__pycache__/
+PLAN.md
