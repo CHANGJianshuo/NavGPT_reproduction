@@ -16,6 +16,7 @@ from langchain.agents.mrkl.base import ZeroShotAgent
 from langchain.agents.tools import Tool
 from langchain.chains import LLMChain
 from langchain.llms.openai import OpenAI
+from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import (
     AgentAction,
@@ -157,16 +158,33 @@ class NavAgent(BaseAgent):
         super().__init__(env)
         self.config = config
 
-        if config.llm_model_name.split('-')[0] == 'gpt':
-            import os
+        import os
+        api_base = os.environ.get('OPENAI_API_BASE', '')
+
+        if 'gemini' in config.llm_model_name:
+            # Gemini via OpenAI-compatible chat endpoint
+            self.llm = ChatOpenAI(
+                temperature=config.temperature,
+                model_name=config.llm_model_name,
+                openai_api_key=os.environ.get('OPENAI_API_KEY'),
+                openai_api_base='https://generativelanguage.googleapis.com/v1beta/openai',
+            )
+        elif config.llm_model_name.split('-')[0] == 'gpt':
             llm_kwargs = dict(
                 temperature=config.temperature,
                 model_name=config.llm_model_name,
             )
-            api_base = os.environ.get('OPENAI_API_BASE')
             if api_base:
                 llm_kwargs['openai_api_base'] = api_base
             self.llm = OpenAI(**llm_kwargs)
+        elif api_base:
+            # Any other model via OpenAI-compatible chat endpoint
+            self.llm = ChatOpenAI(
+                temperature=config.temperature,
+                model_name=config.llm_model_name,
+                openai_api_key=os.environ.get('OPENAI_API_KEY'),
+                openai_api_base=api_base,
+            )
         elif config.llm_model_name == 'llama-2-13b':
             from LLMs.Langchain_llama import Custom_Llama
             ckpt_dir = "LLMs/llama/llama-2-13b"
