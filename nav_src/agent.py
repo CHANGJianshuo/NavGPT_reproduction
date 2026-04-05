@@ -1,4 +1,5 @@
 """Agent that interacts with Matterport3D simulator via a hierarchical planning approach."""
+import patch_langchain  # Fix ChatOpenAI string response from proxies
 import json
 import yaml
 import re
@@ -184,6 +185,8 @@ class NavAgent(BaseAgent):
                 model_name=config.llm_model_name,
                 openai_api_key=os.environ.get('OPENAI_API_KEY'),
                 openai_api_base=api_base,
+                max_retries=3,
+                request_timeout=120,
             )
         elif config.llm_model_name == 'llama-2-13b':
             from LLMs.Langchain_llama import Custom_Llama
