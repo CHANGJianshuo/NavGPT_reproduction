@@ -158,10 +158,15 @@ class NavAgent(BaseAgent):
         self.config = config
 
         if config.llm_model_name.split('-')[0] == 'gpt':
-            self.llm = OpenAI(
+            import os
+            llm_kwargs = dict(
                 temperature=config.temperature,
                 model_name=config.llm_model_name,
             )
+            api_base = os.environ.get('OPENAI_API_BASE')
+            if api_base:
+                llm_kwargs['openai_api_base'] = api_base
+            self.llm = OpenAI(**llm_kwargs)
         elif config.llm_model_name == 'llama-2-13b':
             from LLMs.Langchain_llama import Custom_Llama
             ckpt_dir = "LLMs/llama/llama-2-13b"

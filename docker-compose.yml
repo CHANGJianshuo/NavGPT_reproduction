@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   navgpt:
     build:
@@ -11,13 +9,12 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_API_BASE=${OPENAI_API_BASE}
       - NVIDIA_VISIBLE_DEVICES=all
+      # X11 visualization (uncomment to enable)
+      # - DISPLAY=${DISPLAY}
     volumes:
       - ./datasets:/workspace/datasets
       - ./outputs:/workspace/outputs
+      # X11 visualization (uncomment to enable)
+      # - /tmp/.X11-unix:/tmp/.X11-unix:ro
     stdin_open: true
     tty: true
-    # X11 visualization (uncomment to enable)
-    # environment:
-    #   - DISPLAY=${DISPLAY}
-    # volumes:
-    #   - /tmp/.X11-unix:/tmp/.X11-unix:ro
